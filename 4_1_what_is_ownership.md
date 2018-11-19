@@ -44,6 +44,7 @@ fn some_function() {
 ```
 
 1. When s comes into scope, it is valid.
+
 It remains valid until it goes out of scope.
 
 ### The `String` Type
@@ -96,6 +97,7 @@ In reality, a `String` in Rust has four parts, in key and value style:
 
 | name  | value |
 |-------|-------|
+| name  | 5     |
 | ptr   | -> points to next table|
 | len   | 5     |
 | cap   | 5     |
@@ -110,7 +112,7 @@ In reality, a `String` in Rust has four parts, in key and value style:
 | 3     | l     |
 | 4     | o     |
 
-So when `s1` is assigned to `s2`, is that there will be two objects on the stack (like the first table) that both point to the same data in the stack (the second table). They do not create identical datasets on the heap.
+So when `s1` is assigned to `s2`, now there will be two objects on the stack (like the first table) that both point to the same data in the stack (the second table). They do not create identical datasets on the heap.
 
 When a variable goes out of scope, Rust calls `drop()`to clean up the heap memory for that variable. But with two variables pointing to the same place in the heap, this is a problem: when `s2` and `s1` go out of scope, they both try to free the same memory. This is a double free error and is one of the memory safety bugs we mentioned previously, and can lead to memory corruption, and security vulnerabilities.
 
@@ -118,7 +120,7 @@ To ensure memory safety, there’s one more detail to what happens in this situa
 
 ```rust
 let s1 = String::from("hello");
-let s2 = s1;
+let s2 = s1; // it's game over for `s1`
 
 println!("{}, world!", s1);
 ```
@@ -139,7 +141,7 @@ error[E0382]: use of moved value: `s1`
   not implement the `Copy` trait
 ```
 
-> If you’ve heard the terms shallow copy and deep copy while working with other languages, the concept of copying the pointer, length, and capacity without copying the data probably sounds like making a shallow copy. But because Rust also invalidates the first variable, instead of being called a shallow copy, it’s known as a move. Here we would read this by saying that s1 was moved into s2. So what actually happens is shown in Figure 4-4.
+> If you’ve heard the terms shallow copy and deep copy while working with other languages, the concept of copying the pointer, length, and capacity without copying the data probably sounds like making a shallow copy. But because Rust also invalidates the first variable, instead of being called a shallow copy, it’s known as a move. Here we would read this by saying that s1 was moved into s2. So what actually happens is shown in Figure 4-4 (above).
 
 ### If You *Do* Want to Deeply Copy a Heap Value
 
@@ -147,7 +149,7 @@ error[E0382]: use of moved value: `s1`
 
 ```rust
 let s1 = String::from("hello");
-let s2 = s1.clone();    // here is where the difference is
+let s2 = s1.clone();    // here is where the difference is, similar in my mind to slice() in JS
 
 println!("s1 = {}, s2 = {}", s1, s2);
 ```
@@ -163,12 +165,14 @@ Any group of simple scalar values can be `Copy`, and nothing that requires alloc
 - Tuples, but only if they contain types that are also `Copy`. For example, `(i32, i32)` is `Copy`, but `(i32, String)` is not.
 
 ```rust
-fn main() {
+fn main() {  // comparing the two types: "Copy" and non-"Copy" types
+    // non-copy
     let s = String::from("hello");  // s comes into scope
 
     takes_ownership(s);             // s's value moves into the function...
                                     // ... and so is no longer valid here
 
+    // copy
     let x = 5;                      // x comes into scope
 
     makes_copy(x);                  // x would move into the function,
@@ -196,17 +200,21 @@ Returning values can also transfer ownership.
 
 ```rust
 fn main() {
+    // initial assignment
     let s1 = gives_ownership();         // gives_ownership moves its return
                                         // value into s1
 
     let s2 = String::from("hello");     // s2 comes into scope
 
+    //
     let s3 = takes_and_gives_back(s2);  // s2 is moved into
                                         // takes_and_gives_back, which also
                                         // moves its return value into s3
 } // Here, s3 goes out of scope and is dropped. s2 goes out of scope but was
   // moved, so nothing happens. s1 goes out of scope and is dropped.
 
+// to me, this feels like it should be called
+// `fn conjures_from_the_ether_and_bestows_ownership_upon_a_variable
 fn gives_ownership() -> String {             // gives_ownership will move its
                                              // return value into the function
                                              // that calls it
@@ -219,6 +227,9 @@ fn gives_ownership() -> String {             // gives_ownership will move its
 }
 
 // takes_and_gives_back will take a String and return one.
+
+// this could be called transfers_ownership_from_x_to_new_x
+// this is like a middleware shell for the String type
 fn takes_and_gives_back(a_string: String) -> String { // a_string comes into scope
     a_string  // a_string is returned and moves out to the calling function
 }
@@ -247,5 +258,3 @@ fn calculate_length(s: String) -> (String, usize) {
 ```
 
 But this is much boilerplate for a concept that should be common. Luckily for us, Rust has a feature for this concept, called references.
-
-
