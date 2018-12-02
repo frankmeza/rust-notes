@@ -56,8 +56,53 @@ p1.distance(&p2);
 
 ### Methods with More Parameters
 
+- a method that takes a parameter is actually taking two: (1) self, and (2) the param
+
+```rust
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && self.height > other.height
+    }
+}
+```
+
 ### Associated Functions
 
+- associated functions do NOT take the self value as a param, but they are still related to the struct
+- these are often constructor functions, normal or somehow special, and are used with the `::` syntax
+
+So for `Rectangle`:
+
+```rust
+impl Rectangle {
+    fn square(size: u32) -> Rectangle {
+        Rectangle { width: size, height: size }
+    }
+}
+
+let sq = Rectangle::square(9);
+```
+
 ### Multiple `impl` Blocks
+
+- it is completely valid syntax to have several `impl` blocks for the same struct as having a single block for the entire struct
+
+```rust
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+
+impl Rectangle {
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && self.height > other.height
+    }
+}
+```
 
 > But structs aren’t the only way you can create custom types: let’s turn to Rust’s enum feature to add another tool to your toolbox.
