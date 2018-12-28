@@ -54,4 +54,31 @@ let mut s = String::from("lo");
 s.push('l'); // #push only accepts a single character!
 ```
 
-https://doc.rust-lang.org/book/ch08-02-strings.html#concatenation-with-the--operator-or-the-format-macro
+## Concatenation with the + Operator or the format! Macro
+
+```rust
+let s1 = String::from("Hello, ");
+let s2 = String::from("world!");
+// note that s1 has been moved here and can no longer be used
+let s3 = s1 + &s2; // `s1` has been moved here but `&s2` is a reference
+```
+
+- imagine that `s1` upgrades itself and becomes `s3` by adding the reference to `s2`, i.e. it returns ownership of the result
+- so: after defining `s3`, `s1` is no longer valid because it has been moved
+- NB: `s2` is `&String`... the compiler can coerce `&String` into `&str`
+- so: `s2` is still valid after all of this...!
+
+### the `format!` macro
+
+```rust
+let s1 = String::from("tic");
+let s2 = String::from("tac");
+let s3 = String::from("toe");
+
+let s = format!("{}-{}-{}", s1, s2, s3);
+```
+
+- `format!` does not take ownership of anything
+- SO: all variables are still valid
+
+https://doc.rust-lang.org/book/ch08-02-strings.html#indexing-into-strings
