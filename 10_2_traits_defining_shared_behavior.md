@@ -219,3 +219,72 @@ fn some_function<T, U>(t: T, u: U) -> i32
 *Read in plain language*: `some_function` is generic over types T and U, where `T` implements traits Display and Clone, and where `U` implements traits Clone and Debug, and returns `i32`.
 
 ## Returning Traits
+
+- `impl Trait` can be used in return position, in fn signature
+
+```rust
+fn returns_summarizable() -> impl Summary {
+    Tweet {
+        username: String::from("horse_ebooks"),
+        content: String::from("of course, as you probably already know, people"),
+        reply: false,
+        retweet: false,
+    }
+}
+```
+
+- "`returns_summarizable` returns a type that implements Summary, but we don't know what it is exactly"
+- more about functions that return one or another named types that implement a trait in Chapter 17
+
+## Using Trait Bounds to Conditionally Implement Methods
+
+- we can implement methods conditionally for types that implement specific traits by using a trait bound with an `impl` block that uses generic type parameters
+
+```rust
+use std::fmt::Display;
+
+// Pair is a generic struct over type T
+struct Pair<T> {
+    x: T,
+    y: T,
+}
+
+// this impl block always uses new(), no matter what type T is
+impl<T> Pair<T> {
+    fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+
+// this impl block only implements cmp_display
+// if T implements both Display and PartialOrd traits
+impl <T: Display + PartialOrd> Pair<T> {
+    fn cmp_display(&self) {
+        println!("The largest number is x = {}", self.x);
+    } else {
+        println!("The largest number is y = {}", self.y);
+    }
+}
+```
+
+### Blanket Implementation
+
+> We can also conditionally implement a trait for any type that implements another trait. Implementations of a trait on any type that satisfies the trait bounds are called blanket implementations and are extensively used in the Rust standard library. For example, the standard library implements the ToString trait on any type that implements the Display trait. The impl block in the standard library looks similar to this code:
+
+```rust
+impl<T: Display> ToString for T {
+    // --snip--
+}
+```
+> Blanket implementations appear in the documentation for the trait in the “Implementors” section.
+
+> Because the standard library has this blanket implementation, we can call the to_string method defined by the ToString trait on any type that implements the Display trait. For example, we can turn integers into their corresponding String values like this because integers implement Display:
+
+```rust
+let s = 3.to_string();
+```
+
+- traits and trait bounds allow generic parameters to DRY code, while still using the compiler to check for wanted behavior
+- next up: `lifetimes`
+
+> Another kind of generic that we’ve already been using is called lifetimes. Rather than ensuring that a type has the behavior we want, lifetimes ensure that references are valid as long as we need them to be. Let’s look at how lifetimes do that.
