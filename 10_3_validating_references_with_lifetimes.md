@@ -3,7 +3,7 @@
 - in Rust, every reference has a lifetime, which is its scope of validity
 - most lifetimes are implied and inferred, like types
 
-The point of lifetimes is to ensure that the lifetime of a variable will be valid at runtime.
+The point of lifetimes is to ensure that the lifetime of a variable whose value is borrowed will be valid at runtime.
 
 ## Preventing Dangling References with Lifetimes
 
@@ -104,8 +104,96 @@ fn longest(x: &'a str, y: &'a str) -> &'a str {
 
 > When annotating lifetimes in functions, the annotations go in the function signature, not in the function body. Rust can analyze the code within the function without any help. However, when a function has references to or from code outside that function, it becomes almost impossible for Rust to figure out the lifetimes of the parameters or return values on its own. The lifetimes might be different each time the function is called. This is why we need to annotate the lifetimes manually.
 
-= = = = =
-
 > When we pass concrete references to `longest`, the concrete lifetime that is substituted for `'a` is the part of the scope of `x` that overlaps with the scope of `y`. In other words, the generic lifetime `'a` will get the concrete lifetime that is equal to the smaller of the lifetimes of `x` and `y`. Because we’ve annotated the returned reference with the same lifetime parameter `'a`, the returned reference will also be valid for the length of the smaller of the lifetimes of `x` and `y`.
 
-> Let’s look at how the lifetime annotations restrict the longest function by passing in references that have different concrete lifetimes. Listing 10-23 is a straightforward example.
+> Let’s look at how the lifetime annotations restrict the longest function by passing in references that have different concrete lifetimes.
+
+```rust
+fn main() {
+    // string1 in outer scope
+    let string1 = String::from("long string is long");
+
+    {
+        // string2 in inner scope
+        let string2 = String::from("xyz");
+        // longest() here takes in &refs to variables in two different scopes
+        // result is a ref to a value that only exists in inner scope,
+        // which is okay because result only exists within the inner scope too
+        let result = longest(string1.as_str(), string2.as_str());
+        println!("The longest string is {}", result);
+    }
+}
+```
+
+The above code works just fine. The following code, however, does not:
+
+```rust
+fn main() {
+    // string1 is born
+    let string1 = String::from("long string is long");
+    //result is instantiated
+    let result;
+
+    {
+        // string2 is born
+        let string2 = String::from("xyz");
+        result = longest(string1.as_str(), string2.as_str());
+    }
+//  ^ `string2` dropped here while still borrowed
+
+    // result's reference to string2 is already gone
+    println!("The longest string is {}", result);
+}
+
+```
+
+- error ^^ : `error[E0597]: `string2` does not live long enough`
+
+## Thinking in Terms of Lifetimes
+
+```rust
+fn longest<'a>(x: &'a str, y: &str) -> &'a str {
+    x
+}
+```
+
+The above code compiles fine, because only `x` has an explicit lifetime. The lifetime of `y` has no bearing on either the lifetime of `x` or the return value.
+
+> When returning a reference from a function, the lifetime parameter for the return type needs to match the lifetime parameter for one of the parameters. If the reference returned does not refer to one of the parameters, it must refer to a value created within this function, which would be a dangling reference because the value will go out of scope at the end of the function.
+
+```rust
+// This code does not compile!
+fn longest<'a>(x: &str, y: &str) -> &'a str {
+    let result = String::from("really long string");
+    result.as_str()
+}
+```
+
+The lifetime of the return type isn't related to parameters' lifetimes at all.
+
+**Basically, the return value cannot refer to a value created within the function, as it will go out of scope at the end of the function block.**
+
+## Lifetime Annotations in Struct Definitions
+
+```rust
+struct ImportantExcerpt<'a> {
+    part: &'a str,
+}
+
+fn main() {
+    let novel = String::from("Call me Ishmael. Some years ago...");
+
+    let first_sentence = novel
+        .split()
+        .next()
+        .expect("Could not find a '.'");
+
+    let i = ImportantExcerpt { part: first_sentence };
+}
+```
+
+- this struct has one field, `part` that holds a string slice, which is a reference.
+- as with generic data types, the name of the lifetime parameter is defined inside of angle brackets `< >` to use the lifetime parameter in the body of the struct.
+- this annotation means that an instance of `Important Excerpt` can't outlive the reference that it holds on to.
+
+## Lifetime Elision ...(up next)
