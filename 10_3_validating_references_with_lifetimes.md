@@ -196,4 +196,140 @@ fn main() {
 - as with generic data types, the name of the lifetime parameter is defined inside of angle brackets `< >` to use the lifetime parameter in the body of the struct.
 - this annotation means that an instance of `Important Excerpt` can't outlive the reference that it holds on to.
 
-## Lifetime Elision ...(up next)
+## Lifetime Elision
+
+- every reference has a lifetime, and lifetime params need to be specified. However, this code compiles:
+
+```rust
+fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[..]
+}
+```
+
+### Why?
+
+Way back when, the signature would have had to be this:
+
+```rust
+fn first_word<'a>(s: &'a str) -> &'a str {
+```
+
+There exists *lifetime elision* rules. These are specific cases when the compiler knows already what you want to happen with lifetimes.
+
+There are `input lifetimes` on function and method parameters, and `output lifetimes` on return values.
+
+### The Three Rules of Lifetime Elision
+
+These are for `fn` and `impl` blocks:
+
+1. each param gets its own lifetime parameter, i.e. 2 params means two separate lifetime params.
+
+2. if there is exactly one input lifetime param, that lifetime is assigned to all output lifetime params, i.e. `fn foo<'a>(x: &'a i32) -> &'a i32 {}`
+
+3. if there are multiple input params, but one is `&self` or `&mut self`, the lifetime of `self` is assigned to all output lifetime params.
+
+Let's pretend to be the compiler and examine a `fn` without explicit lifetime params:
+
+### Example: A Function with One Parameter
+
+```rust
+fn first_word(s: &str) -> &str {}
+```
+
+- Rule 1: each param gets a lifetime. So now we have:
+
+```rust
+fn first_word<'a>(s: &'a str) -> &str {}
+```
+
+- Rule 2: This applies, because there's only one param, so:
+
+```rust
+fn first_word<'a>(s: &'a str) -> &'a str {}
+```
+
+- Rule 3: Doesn't apply here.
+
+### Example: A Function with Two Parameters
+
+```rust
+fn longest(x: &str, y: &str) -> &str {}
+```
+
+- Rule 1: each param gets a lifetime:
+
+```rust
+fn longest<'a, 'b>(x: &'a str, y: &'b str) -> &str {}
+```
+
+- Rule 2: Doesn't apply here.
+- Rule 3: Doesn't apply here.
+
+## Lifetime Annotations in Method Definitions
+
+```rust
+impl<'a> ImportantExcerpt<'a> {
+    fn level(&self) -> i32 {
+        3
+    }
+}
+```
+
+- Lifetime names for struct fields are declared after the `impl`.
+- `fn level` above only has one param, `&self`
+
+### Example: Where the Third Rule of Elision Applies
+
+```rust
+impl<'a> ImportantExcerpt<'a> {
+    fn announce_and_return_part(&self, announcement: &str) -> &str {
+        println!("Attention please: {}", announcement);
+        self.part
+    }
+}
+```
+
+- there are two input lifetimes, so each gets a lifetime param. Rule 1
+- but one of the params is `&self`, so the return type gets the lifetime of `&self`
+
+## The Static Lifetime
+
+A special lifetime, `'static`, means that it is valid throughout the entire duration of the program. All string literals have `'static` lifetimes:
+
+```rust
+let s: &'static str = "I have a static lifetime";
+```
+
+## Generic Type Parameters, Trait Bounds, and Lifetimes Together
+
+> Let’s briefly look at the syntax of specifying generic type parameters, trait bounds, and lifetimes all in one function!
+
+```rust
+use std::fmt::Display;
+
+fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a str
+    where T: Display
+{
+    println!("Announcement! {}", ann);
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+```
+
+> This is the longest function from Listing 10-22 that returns the longer of two string slices. But now it has an extra parameter named ann of the generic type T, which can be filled in by any type that implements the Display trait as specified by the where clause. This extra parameter will be printed before the function compares the lengths of the string slices, which is why the Display trait bound is necessary. Because lifetimes are a type of generic, the declarations of the lifetime parameter 'a and the generic type parameter T go in the same list inside the angle brackets after the function name.
+
+- `fn longest_with_an_announcement` returns the longest of two string slices.
+- now it has another generic param, `ann: T` which can be any type that fulfills the `Display` trait.
+- we are telling the compiler that `x` and `y` live equally as long
+
