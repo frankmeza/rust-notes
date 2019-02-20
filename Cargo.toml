@@ -5,3 +5,6 @@ authors = ["Frank Meza <frankmezapdx@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+[[bin]]
+name = "test"
+path = "adder/src/lib.rs"
