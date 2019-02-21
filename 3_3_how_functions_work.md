@@ -1,8 +1,8 @@
 # Functions
 
--   defined with `fn`
--   functions have parameters, which make up the function signature
--   when called, functions receive _arguments_, which are concrete values passed into functions
+- defined with `fn`
+- functions have parameters, which make up the function signature
+- when called, functions receive _arguments_, which are concrete values passed into functions
 
 ```rust
 fn another_function(x: i32) {
@@ -12,8 +12,8 @@ fn another_function(x: i32) {
 
 ## Statements and Expressions
 
--   statements do something, and then do not return a value
--   expressions do return something
+- statements do something, and then do not return a value
+- expressions do return something
 
 ```rust
 fn main() {
@@ -21,9 +21,9 @@ fn main() {
 }
 ```
 
--   so, you cannot assign a `let` _statement_ to another variable, because there is no return value from a statement and nothing for `x` to bind to
+- so, you cannot assign a `let` _statement_ to another variable, because there is no return value from a statement and nothing for `x` to bind to
 
--   Rust uses the omission of a semicolon `;` to signify that that final line of code within a function body will now return a value
+- Rust uses the omission of a semicolon `;` to signify that that final line of code within a function body will now return a value
 
 ```rust
 fn main() {
@@ -55,5 +55,5 @@ fn plus_one(x: i32) -> i32 {
 
 #### WHY?
 
--   `plus_one` does not return a value, its signature is wrong
--   Rust will suggest removing the semicolon in its error message
+- `plus_one` does not return a value, its signature is wrong
+- Rust will suggest removing the semicolon in its error message
