@@ -5,18 +5,18 @@
 - `let` is used to declare variables, which are immutable by default
 - `let mut` is used to declare mutable variables
 
-### RIGHT
+### RIGHT ✅
 
 ```rust
 let mut x = 5;
 x = 6;
 ```
 
-### WRONG
+### WRONG 🚫
 
 ```rust
-let x = 5;
-x = 6;
+let x = 5;  // x is not marked with `mut`
+x = 6;      // so it cannot be reassigned
 ```
 
 ## Constants
@@ -29,11 +29,12 @@ const IS_LIT = true;
 
 ## Variable Shadowing
 
-- variable shadowing is allowed on the idea of using x as an accumulator when you have to do that
-- remember that because you ARE creating a new variable _over_ the old one, you can change the data type too
-- is overwriting of old variable data
+- Variable shadowing is allowed on the idea of using `x` as an accumulator when you have to do that.
+- The shadowing itself is actually an overwriting of old variable data.
+- **Remember that because you ARE creating a new variable _over_ the old one, you can change the data type too.**
+    - This seems out of place in Rust, but whatever. Just don't it unless you know and will 100% remember, always and forever.
 
-### Right
+### Right ✅
 
 ```rust
 let x = 5;
@@ -45,7 +46,7 @@ let spaces = "  ";
 let spaces = spaces.len();
 ```
 
-### WRONG
+### WRONG 🚫
 
 - this does not work with mutable variables
 

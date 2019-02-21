@@ -1,21 +1,21 @@
 # Data Types
 
-- statically typed
-- compiler can usually infer the type based on the value, unless several types are possible, for example when converting a string into an integer type
+- They are statically typed.
+- The compiler can usually infer the type based on the value, unless several types are possible, for example when converting a string into an integer type.
 
 ## Scalar Types
 
-- represents a single value
-- four primary scalar types:
+- represent a single value.
+- There are four primary scalar types:
     1. integers
-    2. floating-point numbers
+    2. floating-point numbers, aka _floats_.
     3. Booleans
     4. characters
 
 ### 1. Integers
 
-- a number without a fractional component
-- signed and unsigned integers
+- a number without a fractional component.
+- signed and unsigned integers.
 
 | Length  | Signed | Unsigned |
 | ------- | ------ | -------- |
@@ -26,7 +26,7 @@
 | 128 bit | i128   | u128     |
 | arch    | isize  | usize    |
 
-- each signed type can hold -(2^(n-1)) => 2^(n-1)-1
+- each signed type can hold -(2^(n-1)) => 2^(n-1)-1 .
 
 for example: `i8`, with `n=8`
 
@@ -36,13 +36,36 @@ for example: `i8`, with `n=8`
 -128 => 127
 ```
 
+What this means is that the only values allowed to be `i8` are literally -128 through 127, so:
+
+### Right ✅
+
+```rust
+// these are all valid and will compile
+let lowest: i8 = -128
+let highest: i8 = 127
+let another_one: i8 = 12
+let and_another+one: i8 = 0
+```
+
+### Wrong 🚫
+
+```rust
+// these are NOT valid and will NOT compile
+// these need to be marked i16, i32, i64
+let lowest: i8 = -1000
+let highest: i8 = 9989
+let another_one: i8 = 120001
+let and_another_one: i8 = -141554
+```
+
 - the isize and usize types depend on the kind of computer your program is running on: 64 bits if you’re on a 64-bit architecture and 32 bits if you’re on a 32-bit architecture. This is only really important if you are indexing a huge collection.
 
-- `i32` is the default type that Rust chooses
+- **`i32` is the default type that Rust chooses.**
 
 #### Integer Overflow
 
-- Rust checks for integer overflow only in debug and causes a `panic`, but not in production. In prod, Rust will use "two's complement wrapping"
+- Rust checks for integer overflow only in debug and causes a `panic`, but not in production. **In prod, Rust will use "two's complement wrapping."**
 
 ### 2. Floating-Point Types
 
@@ -50,7 +73,6 @@ for example: `i8`, with `n=8`
 
 ```rust
 let x = 2.0; // f64
-
 let y: f32 = 3.0; // f32
 ```
 
@@ -92,9 +114,10 @@ let tup: (i32, f64, u8) = (500, 6.4, 1);
 - to access individual values, you can destructure (just like ES6)
 
 ```rust
+// in this example, are the data types inferred?
+
 fn main() {
     let tup = (500, 6.4, 1);
-
     let (x, y, z) = tup;
 
     println!("The value of y is: {}", y);
@@ -108,9 +131,7 @@ fn main() {
     let x: (i32, f64, u8) = (500, 6.4, 1);
 
     let five_hundred = x.0;
-
     let six_point_four = x.1;
-
     let one = x.2;
 }
 ```
