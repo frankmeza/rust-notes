@@ -15,22 +15,23 @@
 ### 1. Integers
 
 - a number without a fractional component.
-- signed and unsigned integers.
+- signed (+/-) and unsigned integers (+).
 
-| Length  | Signed | Unsigned |
-| ------- | ------ | -------- |
-| 8 bit   | i8     | u8       |
-| 16 bit  | i16    | u16      |
-| 32 bit  | i32    | u32      |
-| 64 bit  | i64    | u64      |
-| 128 bit | i128   | u128     |
-| arch    | isize  | usize    |
+
+| Length  | Signed +/- | Unsigned +|
+| ------- | ---------- | --------- |
+| 8 bit   | i8         | u8        |
+| 16 bit  | i16        | u16       |
+| 32 bit  | i32        | u32       |
+| 64 bit  | i64        | u64       |
+| 128 bit | i128       | u128      |
+| arch    | isize      | usize     |
 
 - each signed type can hold -(2^(n-1)) => 2^(n-1)-1 .
 
 for example: `i8`, with `n=8`
 
-```math
+```
 -(2^(8-1)) => 2^(8-1)-1
 
 -128 => 127
@@ -114,7 +115,8 @@ let tup: (i32, f64, u8) = (500, 6.4, 1);
 - to access individual values, you can destructure (just like ES6)
 
 ```rust
-// in this example, are the data types inferred?
+// are the data types inferred here?
+// confirmed: yes, this works.
 
 fn main() {
     let tup = (500, 6.4, 1);
@@ -144,17 +146,27 @@ fn main() {
 
 ```rust
 let months = [
-    "January", "February", "March", "April", "May", "June", "July",
-    "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
 ];
 ```
 
-- arrays have an interesting type; it looks like this: [type; number_of_items]. For example:
+- arrays have an interesting type; it looks like this: [`type`; `number_of_items`]. For example:
 
 ```rust
 // type: i32, length: 5
 let a: [i32; 5] = [1, 2, 3, 4, 5];
 ```
 
-- accessed with `[n]` with n being the index, just like in javascript
-- invalid array element access DOES NOT produce a compile error, BUT DOES produces a runtime error
+- accessed with `[n]` with n being the index, just like in TS/JS.
+- NB: **Invalid array element access DOES NOT produce a compile error, BUT DOES produces a runtime error.**

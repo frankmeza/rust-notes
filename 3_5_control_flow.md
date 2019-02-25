@@ -1,10 +1,12 @@
 # Control Flow
 
-- if expressions, and loops do much of the heavy lifting in Rust control flow
+- if expressions, and loops do much of the heavy lifting in Rust control flow.
 
 ## 1. If Expressions
 
 These are essentially identical to standard Javascript.
+
+- These are more like IF *statements* to me, they are executing code but still not returning a value...
 
 ```rust
 fn main() {
@@ -42,15 +44,16 @@ fn main() {
 }
 ```
 
-### Using IF in a LET statement, aka ternary expression
+### Using IF in a LET statement, aka Ternary Expression
 
-Because if is an expression, we can use it on the right side of a let statement:
+Because `if` is an expression, we can use it on the right side of a let statement:
 
 ```rust
 fn main() {
     let condition = true;
     // this is the ternary equivalent in JS:
     // const number = condition ? 5 : 6
+
     let number = if condition {
         5
     } else {
@@ -72,11 +75,11 @@ fn main() {
 }
 ```
 
-### returning from Loops
+### Returning from Loops
 
 The keyword `break` works just like in Javascript.
 
-### conditional loops, using While Loops
+### Conditional loops, using While Loops
 
 ```rust
 fn main() {

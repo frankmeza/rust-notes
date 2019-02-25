@@ -1,11 +1,11 @@
 # What is Ownership in Rust?
 
-- this is a central feature of the language
-- in Rust, "memory is managed through a system of ownership with a set of rules that the compiler checks at compile time."
+- Ownership is a central feature of the language.
+- In Rust, "memory is managed through a system of ownership with a set of rules that the compiler checks at compile time."
 
 ## The Stack and the Heap
 
-- these are parts of memory
+- these are the parts of memory.
 
 ### The Stack
 
@@ -18,15 +18,15 @@
 ### The Heap
 
 - can accommodate data of unknown size at compile time.
-- less organized than the stack, or more complicated,
+- less organized than the stack, and/or more complex,
 - the OS finds a large enough spot in memory, marks it as being used, and returns a **pointer**. This is called **allocating on the heap**, aka allocating.
 - because the pointer is a known, fixed-size amount of data, *it* can itself be stored on the stack.
 - when the pointer is used from the stack, it must be eventually used to get the data from the heap.
-- accessing data from the heap is slow because you have to follow a pointer to get to the actual data
+- accessing data from the heap is slow because you have to follow a pointer to get to the actual data.
 
-#### The Underlying Ideas behind Ownership
+### The Underlying Ideas behind Ownership
 
-- do not seem extremely difficult, it's just a novel concept for a JS developer working in a browser or mobile view
+- Do not seem extremely difficult, it's just a novel concept for a JS developer working in a browser or mobile view.
 
 ## Ownership Rules
 
@@ -38,12 +38,12 @@
 
 ```rust
 fn some_function() {
-    let s = "hello";    // s is valid from this point forward
-    // do stuff with s
+    let s = "hello"; // s is valid from this point forward
+    // ... do stuff with s...
 }   // this scope is now over, and s is no longer valid
 ```
 
-1. When s comes into scope, it is valid.
+1. When `s` comes into scope, it is valid.
 
 It remains valid until it goes out of scope.
 
@@ -65,17 +65,22 @@ println!("{}", s); // This will print `hello, world!`
 
 ...but string literals cannot be mutatated. The contents of them are known at compile time, as a scalar type that is stored on the stack.
 
+```rust
+// so this is not mutable
+let string_literal = "you can't change me";
+```
+
 ### Rust stores `String` objects on the heap.
 
 This is to support a mutable, growable piece of text, which cannot be stored on the stack.
 
-- Rust has no garbage collector.
+Rust has no garbage collector.
 
-The memory of data is automatically returned once its owner goes out of scope.
+**The memory of data is automatically returned once its owner goes out of scope.**
 
------
+---
 
-### Ways Variables and Data Interact: Move
+## Ways Variables and Data Interact: Move
 
 ### What's Really Happening Here?
 
@@ -102,6 +107,8 @@ In reality, a `String` in Rust has four parts, in key and value style:
 | len   | 5     |
 | cap   | 5     |
 
+NB: notice the `len` and `cap` properties? That seems suspiciously like an array...
+
 #### The actual data for the `String` is on the heap
 
 | index | value |
@@ -114,13 +121,13 @@ In reality, a `String` in Rust has four parts, in key and value style:
 
 So when `s1` is assigned to `s2`, now there will be two objects on the stack (like the first table) that both point to the same data in the stack (the second table). They do not create identical datasets on the heap.
 
-When a variable goes out of scope, Rust calls `drop()`to clean up the heap memory for that variable. But with two variables pointing to the same place in the heap, this is a problem: when `s2` and `s1` go out of scope, they both try to free the same memory. This is a double free error and is one of the memory safety bugs we mentioned previously, and can lead to memory corruption, and security vulnerabilities.
+> When a variable goes out of scope, Rust calls `drop()`to clean up the heap memory for that variable. But with two variables pointing to the same place in the heap, this is a problem: when `s2` and `s1` go out of scope, they both try to free the same memory. This is a `double free error` and is one of the memory safety bugs we mentioned previously, and can lead to memory corruption, and security vulnerabilities.
 
-To ensure memory safety, there’s one more detail to what happens in this situation in Rust. Instead of trying to copy the allocated memory, Rust considers `s1` to no longer be valid and, therefore, Rust doesn’t need to free anything when s1 goes out of scope. Check out what happens when you try to use `s1` after `s2` is created; it won’t work:
+> To ensure memory safety, there’s one more detail to what happens in this situation in Rust. Instead of trying to copy the allocated memory, Rust considers `s1` to no longer be valid and, therefore, Rust doesn’t need to free anything when s1 goes out of scope. Check out what happens when you try to use `s1` after `s2` is created; it won’t work:
 
 ```rust
 let s1 = String::from("hello");
-let s2 = s1; // it's game over for `s1`
+let s2 = s1; // it's game over for `s1`, it's no longer valid
 
 println!("{}, world!", s1);
 ```
@@ -235,9 +242,9 @@ fn takes_and_gives_back(a_string: String) -> String { // a_string comes into sco
 }
 ```
 
-Ownership of a variable follows the same pattern every time: **assigning a value to another variable moves it**. When a variable that includes data on the heap goes out of scope, the value will be cleaned up by drop unless the data has been moved to be owned by another variable.
+> Ownership of a variable follows the same pattern every time: **assigning a value to another variable moves it**. When a variable that includes data on the heap goes out of scope, the value will be cleaned up by drop unless the data has been moved to be owned by another variable.
 
-Taking ownership and then returning ownership with every function is a bit tedious. What if we want to let a function use a value but not take ownership? It’s quite annoying that anything we pass in also needs to be passed back if we want to use it again, in addition to any data resulting from the body of the function that we might want to return as well.
+> Taking ownership and then returning ownership with every function is a bit tedious. What if we want to let a function use a value but not take ownership? It’s quite annoying that anything we pass in also needs to be passed back if we want to use it again, in addition to any data resulting from the body of the function that we might want to return as well.
 
 It’s possible to return multiple values using a tuple, like this:
 

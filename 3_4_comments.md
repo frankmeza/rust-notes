@@ -6,7 +6,7 @@
 
 ```rust
 // a comment about the function here...
-fn regularFn(someProp: i8) {
-    doSomethingWith(someProps); // or tiny explanation
+fn regular_fn(some_prop: i8) {
+    do_something_with(some_prop); // or tiny explanation
 }
 ```

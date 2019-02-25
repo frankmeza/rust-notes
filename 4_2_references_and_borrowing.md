@@ -4,6 +4,8 @@
 fn main() {
     let s1 = String::from("hello");
 
+    // here, calculate_length is only using &s1
+    // as a reference to assign a value to `len`
     let len = calculate_length(&s1);
 
     println!("The length of '{}' is {}.", s1, len);
@@ -14,11 +16,14 @@ fn calculate_length(s: &String) -> usize {
 } // Here, s goes out of scope. But because it does not have ownership of what
   // it refers to, nothing happens.
 ```
-> The scope in which the variable s is valid is the same as any function parameter’s scope, but we don’t drop what the reference points to when it goes out of scope because we don’t have ownership. When functions have references as parameters instead of the actual values, we won’t need to return the values in order to give back ownership, because we never had ownership.
+
+> The scope in which the variable `s` is valid is the same as any function parameter’s scope, but we don’t drop what the reference points to when it goes out of scope because we don’t have ownership. When functions have references as parameters instead of the actual values, we won’t need to return the values in order to give back ownership, because we never had ownership.
+
+- `&String` is a reference to a pointer (is the pointer on the stack?) to data on the heap.
 
 > We call having references as function parameters borrowing. As in real life, if a person owns something, you can borrow it from them. When you’re done, you have to give it back.
 
-- in the above, a *reference* to `s1` is passed into `calculate_length`, instead of the pointer itself
+- in the above, a *reference* to `s1` is passed into `calculate_length`, instead of the pointer itself.
 - the ampersand begins with 'a', so does address (pneumonic device)
 - or you can think of the `&` as a mask that one variable wears of another variable
 
@@ -28,7 +33,6 @@ fn calculate_length(s: &String) -> usize {
 
 ```rust
     let s1 = String::from("hello");
-
     let len = calculate_length(&s1);
 
 ```
@@ -37,23 +41,9 @@ fn calculate_length(s: &String) -> usize {
 - so when `len` goes out of scope, nothing happens to the owner of the `&s1` value passed into it.
 - `calculate_length` only *borrows* the value of `s1` by using `&s1` as a reference
 
-### Mutable References
+## Mutable References
 
-### WON'T WORK
-
-```rust
-fn main() {
-    let s = String::from("hello");
-
-    change(&s); // boom boom uh oh
-}
-
-fn change(some_string: &String) {
-    some_string.push_str(", world");
-}
-```
-
-### WILL WORK
+### Right ✅
 
 ```rust
 fn main() {
@@ -63,6 +53,21 @@ fn main() {
 }
 
 fn change(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+```
+
+### WRONG 🚫
+
+```rust
+fn main() {
+    // this is not marked `mut`
+    let s = String::from("hello");
+
+    change(&s); // boom boom uh oh
+}
+
+fn change(some_string: &String) {
     some_string.push_str(", world");
 }
 ```
@@ -109,10 +114,14 @@ let mut s = String::from("hello");
 
 {
     let r1 = &mut s;
+    println!("{}", r1); // hello
+    r1.push_str(" wut");
 
 } // r1 goes out of scope here, so we can make a new reference with no problems.
 
 let r2 = &mut s;
+
+println!("{}", r2); // hello wut
 ```
 
 > A similar rule exists for combining mutable and immutable references. This code results in an error:
@@ -121,15 +130,16 @@ let r2 = &mut s;
 let mut s = String::from("hello");
 
 let r1 = &s; // no problem
-let r2 = &s; // no problem
+let r2 = &s; // no problem, it's just a silly double reference.
+// It's like hearing two hypothetical stories with the same initial value, no problem
+
 let r3 = &mut s; // BIG PROBLEM
 ```
 
 Here’s the error:
 
 ```bash
-error[E0502]: cannot borrow `s` as mutable because it is also borrowed as
-immutable
+error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable
  --> borrow_thrice.rs:6:19
   |
 4 |     let r1 = &s; // no problem
@@ -142,7 +152,7 @@ immutable
 ```
 
 - having both an immutable *and* mutable reference in the same scope is not allowed.
-- but having mu;tiple immuable references is okay.
+- **but having multiple immutable references is okay**
 
 ### Dangling References
 
@@ -164,7 +174,7 @@ fn dangle() -> &String {
 
 Here’s the error:
 
-```bash
+```
 error[E0106]: missing lifetime specifier
  --> dangle.rs:5:16
   |
