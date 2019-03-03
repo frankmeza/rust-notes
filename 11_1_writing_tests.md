@@ -160,8 +160,6 @@ fn greater_than_100() {
 
 ## Using `Result<T, E>` in Tests
 
-- tests can be written that use `Result<T, E>` as well
-- So far, I like this idea the best. But `assert` comparators are the easiest to wrap my head around.
 
 ```rust
 #[cfg(test)]
@@ -176,3 +174,6 @@ mod tests {
     }
 }
 ```
+
+- tests can be written that use `Result<T, E>` as well
+- So far, I like this idea the best. But `assert` comparators are the easiest to wrap my head around.
