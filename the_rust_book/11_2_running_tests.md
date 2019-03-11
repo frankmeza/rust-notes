@@ -62,7 +62,7 @@ $ cargo test one_hundred
 You can also pass in part of a test name that many tests share, to run several "filtered" tests at once.
 
 ```
-$ cargo test add`
+$ cargo test add
 ```
 
 This will run `add_two_and_two` and `add_three_and_two`.
