@@ -34,7 +34,7 @@ const IS_LIT = true;
 - **Remember that because you ARE creating a new variable _over_ the old one, you can change the data type too.**
     - This seems out of place in Rust, but whatever. Just don't it unless you know and will 100% remember, always and forever.
 
-### Right ✅
+### RIGHT ✅
 
 ```rust
 let x = 5;
