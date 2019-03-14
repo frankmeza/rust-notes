@@ -30,7 +30,9 @@ fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
 
     println!("With text:\n{}", contents);
-
+    // This Ok(()) syntax might look a bit strange at first, but using () like this
+    // is the idiomatic way to indicate that we’re calling run for its side effects only;
+    // it doesn’t return a value we need.
     Ok(())
 }
 
