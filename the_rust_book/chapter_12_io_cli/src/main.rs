@@ -26,23 +26,23 @@ impl Config {
 // Box<dyn Error> returns a type that impl Error trait,
 // to allow all kinds of Error. All kinds.
 fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    // ? returns the value from the current fn to caller
+    // ? returns the value from the current fn to caller.
     let contents = fs::read_to_string(config.filename)?;
 
     println!("With text:\n{}", contents);
-    // This Ok(()) syntax might look a bit strange at first, but using () like this
-    // is the idiomatic way to indicate that we’re calling run for its side effects only;
-    // it doesn’t return a value we need.
+    // This Ok(()) syntax might look a bit strange at first, but using ()
+    // like this is the idiomatic way to indicate that we’re calling run
+    // for its side effects only; it doesn’t return a value we need.
     Ok(())
 }
 
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    // unwrap_or_else is used for error handling
+    // unwrap_or_else is used for error handling.
     let config = Config::new(&args).unwrap_or_else(|err| {
         // this is much better error messaging for users
-        // than the compiler's stock developer debug messages
+        // than the compiler's stock developer debug messages.
         println!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
@@ -50,5 +50,11 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
 
-    run(config);
+    // if-let is used instead of unwrap_or_else() for error checking
+    // because the fn would only return the unit type () .
+    if let Err(err) = run(config) {
+        println!("Application Error: {}", err);
+
+        process::exit(1);
+    }
 }
