@@ -26,8 +26,8 @@ impl Config {
 // Box<dyn Error> returns a type that impl Error trait,
 // to allow all kinds of Error. All kinds.
 fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(config.filename)
-        .expect("Something went wrong reading the file");
+    // ? returns the value from the current fn to caller
+    let contents = fs::read_to_string(config.filename)?;
 
     println!("With text:\n{}", contents);
 
