@@ -1,4 +1,5 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::process;
 
@@ -21,11 +22,16 @@ impl Config {
     }
 }
 
-fn run(config: Config) {
+// aside: () is the unit type
+// Box<dyn Error> returns a type that impl Error trait,
+// to allow all kinds of Error. All kinds.
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)
         .expect("Something went wrong reading the file");
 
     println!("With text:\n{}", contents);
+
+    Ok(())
 }
 
 fn main() {
