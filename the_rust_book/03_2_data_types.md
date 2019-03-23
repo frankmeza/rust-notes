@@ -46,7 +46,7 @@ What this means is that the only values allowed to be `i8` are literally -128 th
 let lowest: i8 = -128
 let highest: i8 = 127
 let another_one: i8 = 12
-let and_another+one: i8 = 0
+let and_another_one: i8 = 0
 ```
 
 ### Wrong 🚫

@@ -14,7 +14,7 @@ fn main() {
 fn calculate_length(s: &String) -> usize {
     s.len() // a reference to a pointer to data on the heap
 } // Here, s goes out of scope. But because it does not have ownership of what
-  // it refers to, nothing happens.
+  // it refers to, nothing bad happens.
 ```
 
 > The scope in which the variable `s` is valid is the same as any function parameter’s scope, but we don’t drop what the reference points to when it goes out of scope because we don’t have ownership. When functions have references as parameters instead of the actual values, we won’t need to return the values in order to give back ownership, because we never had ownership.
@@ -116,7 +116,6 @@ let mut s = String::from("hello");
     let r1 = &mut s;
     println!("{}", r1); // hello
     r1.push_str(" wut");
-
 } // r1 goes out of scope here, so we can make a new reference with no problems.
 
 let r2 = &mut s;

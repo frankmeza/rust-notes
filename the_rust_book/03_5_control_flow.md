@@ -46,7 +46,7 @@ fn main() {
 
 ### Using IF in a LET statement, aka Ternary Expression
 
-Because `if` is an expression, we can use it on the right side of a let statement:
+Because `if` in this case is an expression (returning the final value by omitting the semicolon), we can use it on the right side of a let statement:
 
 ```rust
 fn main() {
@@ -68,6 +68,7 @@ fn main() {
 
 ```rust
 // this will run forever
+
 fn main() {
     loop {
         println!("again!");
@@ -94,8 +95,6 @@ fn main() {
     println!("LIFTOFF!!!");
 }
 ```
-
-They're pretty similar to Javascript... 🤷‍♂️
 
 ### Using a for Loop instead of While
 

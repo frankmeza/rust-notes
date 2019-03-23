@@ -18,7 +18,7 @@
 ### The Heap
 
 - can accommodate data of unknown size at compile time.
-- less organized than the stack, and/or more complex,
+- less organized than the stack, and/or is more complex,
 - the OS finds a large enough spot in memory, marks it as being used, and returns a **pointer**. This is called **allocating on the heap**, aka allocating.
 - because the pointer is a known, fixed-size amount of data, *it* can itself be stored on the stack.
 - when the pointer is used from the stack, it must be eventually used to get the data from the heap.
@@ -208,15 +208,11 @@ Returning values can also transfer ownership.
 ```rust
 fn main() {
     // initial assignment
-    let s1 = gives_ownership();         // gives_ownership moves its return
-                                        // value into s1
-
+    let s1 = gives_ownership();         // gives_ownership moves its return value into s1
     let s2 = String::from("hello");     // s2 comes into scope
 
-    //
-    let s3 = takes_and_gives_back(s2);  // s2 is moved into
-                                        // takes_and_gives_back, which also
-                                        // moves its return value into s3
+    let s3 = takes_and_gives_back(s2);  // s2 is moved into takes_and_gives_back, which also moves its return value into s3
+
 } // Here, s3 goes out of scope and is dropped. s2 goes out of scope but was
   // moved, so nothing happens. s1 goes out of scope and is dropped.
 
@@ -242,7 +238,7 @@ fn takes_and_gives_back(a_string: String) -> String { // a_string comes into sco
 }
 ```
 
-> Ownership of a variable follows the same pattern every time: **assigning a value to another variable moves it**. When a variable that includes data on the heap goes out of scope, the value will be cleaned up by drop unless the data has been moved to be owned by another variable.
+> Ownership of a variable follows the same pattern every time: **assigning a value to another variable moves it**. When a variable that includes data on the heap goes out of scope, the value will be cleaned up by `drop()` unless the data has been moved to be owned by another variable.
 
 > Taking ownership and then returning ownership with every function is a bit tedious. What if we want to let a function use a value but not take ownership? It’s quite annoying that anything we pass in also needs to be passed back if we want to use it again, in addition to any data resulting from the body of the function that we might want to return as well.
 
