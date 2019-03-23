@@ -11,7 +11,7 @@ fn main() {
         // this is much better error messaging for users
         // than the compiler's stock developer debug messages.
 
-        println!("Problem parsing arguments: {}", err);
+        eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
 
@@ -22,7 +22,7 @@ fn main() {
     // because the fn would only return the unit type () .
 
     if let Err(err) = chapter_12_io_cli::run(config) {
-        println!("Application Error: {}", err);
+        eprintln!("Application Error: {}", err);
 
         process::exit(1);
     }

@@ -3,11 +3,7 @@
 // The definition of Config
 // The Config::new function definition
 
-use std::{
-    env,
-    error::Error,
-    fs,
-};
+use std::{env, error::Error, fs};
 
 pub struct Config {
     pub query: String,
@@ -34,6 +30,7 @@ impl Config {
         })
     }
 }
+
 // aside: () is the unit type
 // Box<dyn Error> returns a type that impl Error trait,
 // to allow all kinds of Error. All kinds.
