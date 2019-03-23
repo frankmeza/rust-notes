@@ -32,7 +32,11 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // ? returns the value from the current fn to caller.
     let contents = fs::read_to_string(config.filename)?;
 
-    println!("With text:\n{}", contents);
+    for line in search(&config.query, &contents) {
+        println!("{}", line);
+
+    }
+
     // This Ok(()) syntax might look a bit strange at first, but using ()
     // like this is the idiomatic way to indicate that we’re calling run
     // for its side effects only; it doesn’t return a value we need.
@@ -40,7 +44,15 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    vec![]
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line)
+        }
+    }
+
+    results
 }
 
 #[cfg(test)]
@@ -53,7 +65,7 @@ mod tests {
         let query = "duct";
         let contents = "\
 Rust:
-safe, fast, productive.
+safe, fast, productive
 Pick three.";
 
         assert_eq!(
