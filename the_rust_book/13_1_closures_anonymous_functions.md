@@ -110,7 +110,9 @@ let expensive_closure = |num: u32| -> u32 {
 
 ## Storing Closures Using Generic Parameters and the Fn Traits
 
-### reread this again
+### reread this 
+
+### My Own Thoughts About It All, After The First Read
 
 __It's a struct that holds a closure, so that it can be passed around instead of the closure itself__
 
@@ -118,4 +120,36 @@ __It's like a JS object that has a function on it as part of a key/value pair__
 
 __It's like a pointer to a function...???...!!!...???__
 
-"I'm going to give you this function that I'm going to run inside of your function, so that you can five me the variables that I need to run my function."
+__"I'm going to give you this function that I'm going to run inside of your function, so that you can give me the variables that I need to run my function."__
+
+In Rust, a `struct` can be created to hold the closure. In order to do that, a type must be specified for the closure to give to the `struct`.  
+
+> Each closure instance has its own unique anonymous type: that is, even if two closures have the same signature, their types are still considered different. To define structs, enums, or function parameters that use closures, we use generics and trait bounds, as we discussed in Chapter 10.
+
+- wut ^^
+
+All closures implement at least one of the following:
+
+- `Fn`
+- `FnMut`
+- `FnOnce`
+
+```rust
+// struct Cacher over a generic type, where 
+// that type implements fn signature `Fn :: u32 -> u32`
+struct Cacher<T>
+    where T: Fn(u32) -> u32 // 2. the trait bound on T is that of a closure (Fn, FnMut, FnOnce)
+{
+    calculation: T, // 1. the calc field of the generic type T
+    value: Option<u32>,
+}
+```
+
+1. The Cacher struct has a calculation field of the generic type T. 
+2. The trait bounds on T specify that it’s a closure by using the Fn trait.
+3. |When in Use, not in definition| -> Any closure we want to store in the calculation field must have 
+  * one u32 parameter (in parens) and must return a u32 (after ->).
+
+## split this all up
+
+  The value field is of type Option<u32>. Before we execute the closure, value will be None. When code using a Cacher asks for the result of the closure, the Cacher will execute the closure at that time and store the result within a Some variant in the value field. Then if the code asks for the result of the closure again, instead of executing the closure again, the Cacher will return the result held in the Some variant.
