@@ -150,6 +150,32 @@ struct Cacher<T>
 3. |When in Use, not in definition| -> Any closure we want to store in the calculation field must have 
   * one u32 parameter (in parens) and must return a u32 (after ->).
 
-## split this all up
 
-  The value field is of type Option<u32>. Before we execute the closure, value will be None. When code using a Cacher asks for the result of the closure, the Cacher will execute the closure at that time and store the result within a Some variant in the value field. Then if the code asks for the result of the closure again, instead of executing the closure again, the Cacher will return the result held in the Some variant.
+```rust
+impl<T> Cacher<T>
+    where T: Fn(u32) -> u32
+{
+    fn new(calculation: T) -> Cacher<T> {
+        Cacher {
+            calculation,
+            value: None, // 1. Option<u32>, but 2. right now None
+        }
+    }
+
+    fn value(&mut self, arg: u32) -> u32 {
+        match self.value {
+            None => {
+                let v = (self.calculation)(arg); // 3. value is set
+                self.value = Some(v);
+                v
+            },
+            Some(v) => v, // 4. value is returned if already set
+        }
+    }
+}
+```
+
+1. The value field is of type Option<u32>.
+2. Before we execute the closure, value will be None. 
+3. When code using a Cacher asks for the result of the closure, the Cacher will execute the closure at that time and store the result within a Some variant in the value field. 
+4. Then if the code asks for the result of the closure again, instead of executing the closure again, the Cacher will return the result held in the Some variant.
