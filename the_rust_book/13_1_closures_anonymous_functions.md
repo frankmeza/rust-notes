@@ -1,6 +1,6 @@
 # Closures: Anonymous Functions that Can Capture Their Environment
 
-- Rust's closures allow you to access and capture the variables in one scope from another scope. They can be created in one place and then used elsewhere
+- Rust's closures allow you to access and capture the variables in one scope from another scope. They can be created in one place and then used elsewhere.
 
 ## Creating an Abstraction of Behavior with Closures
 
@@ -15,6 +15,7 @@ fn simulated_expensive_calc(intensity: u32) -> u32 {
     thread::sleep(Duration::from_secs(2));
     intensity
 }
+
 fn generate_workout(intensity: u32, random_number: u32) {
     if intensity < 25 {
         println!(
@@ -110,8 +111,6 @@ let expensive_closure = |num: u32| -> u32 {
 
 ## Storing Closures Using Generic Parameters and the Fn Traits
 
-### reread this 
-
 ### My Own Thoughts About It All, After The First Read
 
 __It's a struct that holds a closure, so that it can be passed around instead of the closure itself__
@@ -125,8 +124,6 @@ __"I'm going to give you this function that I'm going to run inside of your func
 In Rust, a `struct` can be created to hold the closure. In order to do that, a type must be specified for the closure to give to the `struct`.  
 
 > Each closure instance has its own unique anonymous type: that is, even if two closures have the same signature, their types are still considered different. To define structs, enums, or function parameters that use closures, we use generics and trait bounds, as we discussed in Chapter 10.
-
-- wut ^^
 
 All closures implement at least one of the following:
 
