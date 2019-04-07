@@ -179,3 +179,33 @@ impl<T> Cacher<T>
 2. Before we execute the closure, value will be None. 
 3. When code using a Cacher asks for the result of the closure, the Cacher will execute the closure at that time and store the result within a Some variant in the value field. 
 4. Then if the code asks for the result of the closure again, instead of executing the closure again, the Cacher will return the result held in the Some variant.
+
+```typescript
+// possible typescript implementation?
+
+type Closure = (number) => number
+type Value = number | null
+
+interface Cacher {
+    closure: Closure
+    value: Value
+}
+
+class Cacher<calculation: Closure>:  {
+    constructor(T) {
+        this.calculation = calculation 
+        this.value = null
+    }
+
+    value = (num: number): Value => {
+        if (!this.value) {
+            this.value = this.calculation(num)   
+        }
+
+        return this.value
+    }
+}
+
+const someFn: Closure = (n: number) => n * n
+const anonClosure = new Cacher(someFn)
+```
