@@ -121,6 +121,11 @@ __It's like a pointer to a function...???...!!!...???__
 
 __"I'm going to give you this function that I'm going to run inside of your function, so that you can give me the variables that I need to run my function."__
 
+### My Own Thoughts About It All, After Some Time Has Passed
+
+__It's like passing around an empty gun so anyone can shoot their own bullets.__
+__It's like a waiter that moves around between callers as they need to order data processed.__
+
 In Rust, a `struct` can be created to hold the closure. In order to do that, a type must be specified for the closure to give to the `struct`.  
 
 > Each closure instance has its own unique anonymous type: that is, even if two closures have the same signature, their types are still considered different. To define structs, enums, or function parameters that use closures, we use generics and trait bounds, as we discussed in Chapter 10.
