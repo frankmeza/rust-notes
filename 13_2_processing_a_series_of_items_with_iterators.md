@@ -23,3 +23,18 @@ for (i = 0; i <= array.length; i++) {
 } 
 ```
 
+## The `Iterator` Trait and the `next` Method
+
+- all iterators implement the `Iterator` trait:
+
+```rust
+trait Iterator {
+    type Item;
+
+    fn next(&mut self) -> Option<Self::Item>;
+}
+```
+
+- new syntax here: `type Item` and `Self::Item`, which represents an _associated type_.
+- the code reads like "To use this trait, you have to do your part too and define these methods down here for yourself."
+  - explicitly, that a type `Item` is defined, and that this type is to be returned from the implementation of `next` wrapped in `Option<T>`.
