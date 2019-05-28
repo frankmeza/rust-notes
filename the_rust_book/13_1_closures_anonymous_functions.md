@@ -123,8 +123,11 @@ __"I'm going to give you this function that I'm going to run inside of your func
 
 ### My Own Thoughts About It All, After Some Time Has Passed
 
-__It's like passing around an empty gun so anyone can shoot their own bullets.__
-__It's like a waiter that moves around between callers as they need to order data processed.__
+__It's like passing around an empty gun so anyone can shoot their own bullets.__  
+
+__It's like a waiter that moves around between callers as they need to order data processed.__  
+
+__A closure is like easy bake functions available to use by code local to it.__  
 
 In Rust, a `struct` can be created to hold the closure. In order to do that, a type must be specified for the closure to give to the `struct`.  
 
