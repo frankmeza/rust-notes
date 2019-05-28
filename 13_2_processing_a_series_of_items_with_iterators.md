@@ -182,3 +182,32 @@ impl Iterator for Counter {
 
 ## Using Our Counter Iterator’s `next` Method
 
+```rust
+#[test]
+fn calling_next_directly() {
+    let mut counter = Counter::new();
+
+    // `.next()` called each time
+    assert_eq!(counter.next(), Some(1)); 
+    assert_eq!(counter.next(), Some(2));
+    assert_eq!(counter.next(), Some(3));
+    assert_eq!(counter.next(), Some(4));
+    assert_eq!(counter.next(), Some(5));
+}
+
+```
+
+## Using Other Iterator Trait Methods
+
+- we can now use the `Iterator` trait methods, simply because we implemented `next`, a là:
+
+```rust
+#[test]
+fn using_other_iterator_trait_methods() {
+    let sum: u32 = Counter::new().zip(Counter::new().skip(1))
+        .map(|(a, b)| a * b)
+        .filter(|x| x % 3 == 0)
+        .sum();
+
+    assert_eq!(18, sum);
+}
