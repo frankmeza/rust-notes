@@ -55,6 +55,27 @@ let loopback = IpAddr {
 };
 ```
 
+Equivalent code in Typescript might be:
+
+```typescript
+type IpAddrKind = V4 | V6
+
+interface IpAddr {
+    readonly kind: IpAddrKind
+    readonly address: string
+}
+
+const home: IpAddr = {
+    kind: V4,
+    address: "127.0.0.1",
+}
+
+const loopback: IpAddr = {
+    kind: V6,
+    address: "::1",
+}
+```
+
 The above code can be shortened up like this:
 
 ```rust
@@ -114,11 +135,14 @@ Several `struct`s can be used to encapsulate the data structure in the enum abov
 
 ```rust
 struct QuitMessage; // unit struct
+
 struct MoveMessage {
     x: i32,
     y: i32,
 }
+
 struct WriteMessage(String); // tuple struct
+
 struct ChangeColorMessage(i32, i32, i32); // tuple struct
 ```
 
@@ -176,4 +200,3 @@ let sum = x + y;
 How does one do this conversion?
 
 > In general, in order to use an Option<T> value, you want to have code that will handle each variant. You want some code that will run only when you have a Some(T) value, and this code is allowed to use the inner type `<T>`. You want some other code to run if you have a None value, and that code doesn’t have a T value available. The match expression is a control flow construct that does just this when used with enums: it will run different code depending on which variant of the enum it has, and that code can use the data inside the matching value.
-

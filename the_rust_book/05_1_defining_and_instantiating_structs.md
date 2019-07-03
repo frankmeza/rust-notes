@@ -30,7 +30,7 @@ let user1 = User {
 // a mutable instance of User //
 
 // notice use of `mut` keyword
-let mut user1 = User {
+let mut user2 = User {
     email: String::from("someone@example.com"),
     username: String::from("someusername123"),
     active: true,
@@ -38,7 +38,7 @@ let mut user1 = User {
 };
 
 // can be used to set a value in a mutable instance
-user1.email = String::from("anotheremail@example.com");
+user2.email = String::from("anotheremail@example.com");
 ```
 
 - dot notation can be used to get a value of a key
@@ -117,7 +117,7 @@ struct nil_struct();
 
 ## Ownership of Struct Data
 
-- in `User`, String type rather than the &str string slice type is used
+- in `User`, `String` type rather than the `&str` string slice type is used
 - this is deliberate because we want instances of this struct to own all its own data and for that data to be valid for as long as the entire struct is valid.
 
 > It’s possible for structs to store references to data owned by something else, but to do so requires the use of lifetimes, a Rust feature that we’ll discuss in Chapter 10. Lifetimes ensure that the data referenced by a struct is valid for as long as the struct is. Let’s say you try to store a reference in a struct without specifying lifetimes, like this, which won’t work:
