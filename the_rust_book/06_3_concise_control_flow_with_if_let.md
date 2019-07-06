@@ -9,6 +9,7 @@
 ```rust
 let some_u8_value = Some(0u8);
 
+// basically an IF statement
 match some_u8_value {
     Some(3) => println!("three"),
     _ => (), // this lets ALL other cases go to nothing
@@ -24,7 +25,15 @@ if let Some(3) = some_u8_value {
 }
 ```
 
-... which is just *so slick*.
+... which is just *so slick*.  
+
+This is something like a short-circuit statement:
+
+```typescript
+const someU8Value = 0
+
+!!someU8Value && someU8Value === 3 && console.log("three")
+```
 
 it's summed up with:
 
