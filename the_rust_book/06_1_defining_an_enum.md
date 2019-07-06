@@ -55,27 +55,6 @@ let loopback = IpAddr {
 };
 ```
 
-Equivalent code in Typescript might be:
-
-```typescript
-type IpAddrKind = V4 | V6
-
-interface IpAddr {
-    readonly kind: IpAddrKind
-    readonly address: string
-}
-
-const home: IpAddr = {
-    kind: V4,
-    address: "127.0.0.1",
-}
-
-const loopback: IpAddr = {
-    kind: V6,
-    address: "::1",
-}
-```
-
 The above code can be shortened up like this:
 
 ```rust
