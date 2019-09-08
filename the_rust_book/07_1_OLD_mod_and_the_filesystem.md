@@ -82,7 +82,7 @@ mod network {
 }
 ```
 
-> We’re still declaring the client module here, but by replacing the block with a semicolon, we’re telling Rust to look in another location for the code defined within the scope of the client module. In other words, the line mod client; means this:
+> We’re still declaring the client module here, but by replacing the block with a semicolon, we’re telling Rust to look in another location for the code defined within the scope of the client module. In other words, the line `mod client;` means this:
 
 Now create a file `client.rs` . Inside of this file is this:
 

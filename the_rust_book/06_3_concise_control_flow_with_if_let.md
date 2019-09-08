@@ -19,7 +19,8 @@ match some_u8_value {
 ### Into this:
 
 ```rust
-
+// checks both Option<T> is Some(T) 
+// and that that value is 3
 if let Some(3) = some_u8_value {
     println!("three");
 }
@@ -32,7 +33,11 @@ This is something like a short-circuit statement:
 ```typescript
 const someU8Value = 0
 
-!!someU8Value && someU8Value === 3 && console.log("three")
+// checks both someU8Value is truthy
+// and that that value is 3
+!!someU8Value 
+  && someU8Value === 3 
+  && console.log("three")
 ```
 
 it's summed up with:

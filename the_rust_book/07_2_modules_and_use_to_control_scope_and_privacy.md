@@ -84,8 +84,7 @@ Calling the above would throw an error because modules default to private betwee
 
 mod sound {
     pub mod instrument {
-            pub woodwind {
-
+        pub woodwind {
             pub fn clarinet() {
                 // Function body code goes here
             }
