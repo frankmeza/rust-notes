@@ -57,6 +57,7 @@ fn iterator_demonstration() {
     assert_eq!(v1_iter.next(), None);
 }
 ```
+
 - If we want to create an iterator that takes ownership of v1 and returns owned values, we can call `into_iter` instead of `iter`. Similarly, if we want to iterate over mutable references, we can call `iter_mut` instead of `iter`.
 
 - behind the scenes, this code makes `v1_iter` mutable.
@@ -99,6 +100,12 @@ v1.iter().map(|x| x + 1); // this will actually do nothing yet
 
 - the method `collect()` needs to be called on iterator methods in order to actually fire the computation
 
+```rust
+let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
+
+assert_eq!(v2, vec![2, 3, 4]); // creates a new vector
+```
+
 ## Using Closures that Capture Their Environment
 
 ```rust
@@ -117,21 +124,20 @@ fn shoes_in_my_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
 #[test]
 fn filters_by_size() {
     let shoes = vec![
-        Shoe { size: 10, style: String::from("sneaker")},
-        Shoe { size: 13, style: String::from("sandal")},
-        Shoe { size: 10, style: String::from("boot")},
+        Shoe { size: 10, style: String::from("sneaker") },
+        Shoe { size: 13, style: String::from("sandal") },
+        Shoe { size: 10, style: String::from("boot") },
     ];
 
     let in_my_size = shoes_in_my_size(shoes, 10);
 
     let expected_shoes = vec![
-        Shoe { size: 10, style: String::from("sneaker")},
-        Shoe { size: 10, style: String::from("boot")},
+        Shoe { size: 10, style: String::from("sneaker") },
+        Shoe { size: 10, style: String::from("boot") },
     ];
 
     assert_eq!(in_my_size, expected_shoes);
 }
-
 ```
 
 - `shoes_in_my_size` fn takes ownership of `shoes` vector and a numeric size, returns filter results as `Vec<Shoe>`.
@@ -193,7 +199,6 @@ fn calling_next_directly() {
     assert_eq!(counter.next(), Some(4));
     assert_eq!(counter.next(), Some(5));
 }
-
 ```
 
 ## Using Other Iterator Trait Methods
