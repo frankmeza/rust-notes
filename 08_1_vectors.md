@@ -27,7 +27,7 @@ v.push(6);
 - then the vector has values pushed into it. This is where Rust is able to infer the data types based on the pushed values.
 - so in this example, the strong typing is not necessary
 
-## Dropping a Vector Drops Its Elements
+## Dropping a Vector Causes It to Drop Its Elements
 
 ```rust
 

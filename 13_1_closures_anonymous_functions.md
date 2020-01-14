@@ -75,7 +75,7 @@ A closure:
 After seeing this comparison:
 
 ```rust
-fn  add_one_v1   (x: u32) -> u32 { x + 1 }
+fn add_one_v1    (x: u32) -> u32 { x + 1 } // regular function syntax
 let add_one_v2 = |x: u32| -> u32 { x + 1 };
 let add_one_v3 = |x|             { x + 1 };
 let add_one_v4 = |x|               x + 1  ;
@@ -86,18 +86,20 @@ it almost appears as if closures are a kind of _dialect_ of functions.
 The second one, 
 
 ```rust
+// rust
 let add_one_v2 = |x: u32| -> u32 { x + 1 };
 ```
 
 looks just like
 
 ```typescript
+// typescript
 const addOneV2 = (n: number): number => { n + 1 }
 ```
 
 ## Closure Type Inference and Annotation
 
-Closures do not require to be typed, like other functions. Closures are not public facing. However, in the pursuit of explicitness and strictness, a closure with annotations like `add_one_f2`
+Closures do not require to be typed, like other functions. Closures are not public facing. However, in the pursuit of explicitness and strictness, a closure with annotations like `add_one_v2`
 
 ```rust
 let expensive_closure = |num: u32| -> u32 {
@@ -107,7 +109,7 @@ let expensive_closure = |num: u32| -> u32 {
 };
 ```
 
-- say that a `String` first enters the closure and walks out without error, the next `i32` will not compile. Not cool, dude. Blame the compiler inferrence. It locks its first data type as the unique one used within that closure.  
+- say that a `String` first enters the closure and walks out without error, the next `i32` will not compile. Not cool, dude. Blame the compiler inference. It locks its first data type as the unique one used within that closure.  
 
 ## Storing Closures Using Generic Parameters and the Fn Traits
 

@@ -2,7 +2,6 @@
 
 ## In Function Definitions
 
-
 ```rust
 fn largest_i32(list: &[i32]) -> i32 {
     let mut largest = list[0];

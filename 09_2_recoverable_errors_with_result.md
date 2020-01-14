@@ -58,7 +58,7 @@ fn main() {
     let f = match f {
         Ok(file) => file,
         // returns io::Error, with #kind()
-        Err(err) => match error.kind() {
+        Err(err) => match err.kind() {
             // "if 'not found' is the returned error from File::open("hello.txt"),
             // then File::create it. If that works, return that Result, else `panic!`
             ErrorKind::NotFound => match File::create("hello.txt") {
@@ -104,7 +104,6 @@ fm main() {
 
 ```rust
 // #1 NAIVE VERSION
-
 use std::io;
 use std::io::Read;
 use std::fs::File;
@@ -145,6 +144,7 @@ fn read_username_from_file() -> Result<String, io::Error> {
     let mut f = File::open("hello.txt");
     let mut s = String::new();
 
+    // this is the propogator of errors to the calling function
     f.read_to_string(&mut s)?;
     Ok(s)
 }

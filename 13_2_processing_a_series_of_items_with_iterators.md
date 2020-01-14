@@ -8,7 +8,7 @@ let v1 = vec![1, 2, 3];
 let v1_iter = v1.iter();
 
 for val in v1_iter {
-    println!("Got {} as value");
+    println!("Got {} as value", val);
 }
 ```
 
@@ -57,7 +57,7 @@ fn iterator_demonstration() {
     assert_eq!(v1_iter.next(), None);
 }
 ```
-- If we want to create an iterator that takes ownership of v1 and returns owned values, we can call into_iter instead of iter. Similarly, if we want to iterate over mutable references, we can call iter_mut instead of iter.
+- If we want to create an iterator that takes ownership of v1 and returns owned values, we can call `into_iter` instead of `iter`. Similarly, if we want to iterate over mutable references, we can call `iter_mut` instead of `iter`.
 
 - behind the scenes, this code makes `v1_iter` mutable.
 
@@ -177,7 +177,6 @@ impl Iterator for Counter {
       }
   }
 }
-
 ```
 
 ## Using Our Counter Iterator’s `next` Method

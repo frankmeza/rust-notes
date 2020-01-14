@@ -77,7 +77,6 @@ let score = scores.get(&team_name);
 ### Iteration over Key/Value Pairs
 
 ```rust
-
 use std::collections::HashMap;
 
 let mut scores = HashMap::new();
