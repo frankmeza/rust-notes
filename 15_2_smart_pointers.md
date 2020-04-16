@@ -259,6 +259,6 @@ The third case is trickier:
 
 Because of the borrowing rules,
 
-1. if you have a mutable reference, that mutable reference must be the only reference to that data (otherwise, the program wouldn’t compile). // like case 2?
-2. Converting one mutable reference to one immutable reference will never break the borrowing rules. // like case 3?
+1. if you have a mutable reference, that mutable reference must be the only reference to that data (otherwise, the program wouldn’t compile). `// like case 2?`
+2. Converting one mutable reference to one immutable reference will never break the borrowing rules. `// like case 3?`
 3. Converting an immutable reference to a mutable reference would require that there is only one immutable reference to that data, and the borrowing rules don’t guarantee that. Therefore, Rust can’t make the assumption that converting an immutable reference to a mutable reference is possible.
