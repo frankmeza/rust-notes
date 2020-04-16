@@ -192,15 +192,7 @@ a function that has a string slice parameter:
 fn hello(name: &str) {
     println!("Hello, {}!", name);
 }
-
-hello(
-    &(
-
-    )
-// )}
-
-// h
-// ```
+```
 
 You can call the `hello` function with a string slice as an argument, such as `hello("Rust");` for example. `Deref` coercion makes it possible to call hello with a reference to a value of type `MyBox<`String`>`:
 
