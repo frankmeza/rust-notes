@@ -165,4 +165,4 @@ count after c goes out of scope = 2
 - when `b` and then `a` go out of scope at the end of `main`, the count is then `0`, and the `Rc<List>` is cleaned up completely
 - using `Rc<T>` allows a single value to have multiple owners, and the count ensures that the value remains valid as long as any of the owners still exist.
 
-Via immutable refs, `Rc<T>` allows you to share data between multiple parts of your program for __reading only__. If `Rc<T>` allowed you to have multiple __mutable__ refs too, you might violate one of the borrowing rules discussed in Chapter 4: multiple mutable borrows to the same place can cause data races and inconsistencies.  
+> Via immutable refs, `Rc<T>` allows you to share data between multiple parts of your program for __reading only__. If `Rc<T>` allowed you to have multiple __mutable__ refs too, you might violate one of the borrowing rules discussed in Chapter 4: multiple mutable borrows to the same place can cause data races and inconsistencies.  
