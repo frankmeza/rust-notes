@@ -416,6 +416,12 @@ c after = Cons(RefCell { value: 10 }, Cons(RefCell { value: 15 }, Nil))
 
 Using `RefCell<T>`, we have an outwardly immutable List value.  
 
-But we can use the methods on `RefCell<T>` that provide access to its interior mutability so we can modify our data when we need to. The runtime checks of the borrowing rules protect us from data races, and it’s sometimes worth trading a bit of speed for this flexibility in our data structures.
+But we can use the methods on `RefCell<T>` that provide access to its interior mutability so we can modify our data when we need to.  
 
-The standard library has other types that provide interior mutability, such as `Cell<T>`, which is similar except that instead of giving references to the inner value, the value is copied in and out of the `Cell<T>`. There’s also `Mutex<T>`, which offers interior mutability that’s safe to use across threads.
+__The runtime checks of the borrowing rules protect us from data races, and it’s sometimes worth trading a bit of speed for this flexibility in our data structures.__  
+
+The standard library has other types that provide interior mutability, such as:
+
+- `Cell<T>`, which is similar except that instead of giving references to the inner value, the value is copied in and out of the `Cell<T>`.
+- There’s also `Mutex<T>`, which offers interior mutability that’s safe to use across threads.
+  
