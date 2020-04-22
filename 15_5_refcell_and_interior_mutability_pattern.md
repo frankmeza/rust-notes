@@ -392,10 +392,10 @@ fn main() {
     let b = Cons(Rc::new(RefCell::new(6)), Rc::clone(&a));
     let c = Cons(Rc::new(RefCell::new(10)), Rc::clone(&a));
 
-    // add 10 to value by calling `borrow_mut` on value
-    // uses auto dereferencing to deref Rc<T> to inner RefCell<T> value
-    // borrow_mut() returns RefMut<T> smart pointer
+    // 'value' uses auto dereferencing to deref Rc<T> to inner RefCell<T> value
+    // .borrow_mut() returns RefMut<T> smart pointer
     // use deref operator (*) on it and change the inner value
+    // += add 10 to value by calling `borrow_mut` on value
     *value.borrow_mut() += 10;
 
     println!("a after = {:?}", a);
