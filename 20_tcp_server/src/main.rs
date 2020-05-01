@@ -28,7 +28,6 @@ fn handle_connection(mut stream: TcpStream) {
     };
 
     let contents = fs::read_to_string(filename).unwrap();
-
     let response = format!("{}{}", status_line, contents);
 
     stream.write(response.as_bytes()).unwrap();

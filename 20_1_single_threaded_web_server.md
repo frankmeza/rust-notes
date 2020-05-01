@@ -176,3 +176,239 @@ Accept: */*
 Now that we’re printing the request data, we can see why we get multiple connections from one browser request by looking at the path after Request: `GET`. If the repeated connections are all requesting `/`, we know the browser is trying to fetch `/` repeatedly because it’s not getting a response from our program.  
 
 Let’s break down this request data to understand what the browser is asking of our program:
+
+## A Closer Look at an HTTP Request
+
+`HTTP` is a text-based protocol, and a request takes this format:
+
+```
+Method Request-URI HTTP-Version CRLF
+headers CRLF
+message-body
+```
+
+The first line is the request line that holds information about what the client is requesting. The first part of the request line indicates the method being used, such as `GET` or `POST`, which describes how the client is making this request. Our client used a `GET` request.  
+
+The next part of the request line is `/`, which indicates the Uniform Resource Identifier (URI) the client is requesting:
+
+- a URI is almost, but not quite, the same as a Uniform Resource Locator (URL).
+
+The last part is the HTTP version the client uses, and then the request line ends in a CRLF sequence. (CRLF stands for carriage return and line feed, which are terms from the typewriter days!) The CRLF sequence can also be written as \r\n, where \r is a carriage return and \n is a line feed. The CRLF sequence separates the request line from the rest of the request data. Note that when the CRLF is printed, we see a new line start rather than \r\n.
+
+Looking at the request line data we received from running our program so far, we see that `GET` is the method, `/` is the request URI, and HTTP/1.1 is the version.
+
+After the request line, the remaining lines starting from `Host`: onward are headers. `GET` requests have no body.
+
+Try making a request from a different browser or asking for a different address, such as `127.0.0.1:7878/test`, to see how the request data changes.
+
+## Writing a Response
+
+### Implement sending data in response to a client request
+
+Responses have the following format:
+
+```
+HTTP-Version Status-Code Reason-Phrase CRLF
+headers CRLF
+message-body
+```
+
+1. The first line
+
+- a status line that contains the HTTP version used in the response, 
+- a numeric status code that summarizes the result of the request, 
+- and a reason phrase that provides a text description of the status code.  
+
+After the CRLF sequence are any headers, another CRLF sequence, and the body of the response.
+
+Here is an example response:
+
+- that uses HTTP version 1.1, 
+- has a status code of 200, 
+- an OK reason phrase, no headers, and no body:
+
+```
+HTTP/1.1 200 OK\r\n\r\n
+```
+
+The status code `200` is the standard success response. The text is a tiny successful HTTP response.  
+
+Let’s write this to the stream as our response to a successful request from the `handle_connection` function:
+
+```rust
+// Writing a tiny successful HTTP response to the stream
+fn handle_connection(mut stream: TcpStream) {
+    let mut buffer = [0; 512];
+
+    stream.read(&mut buffer).unwrap();
+
+    let response = "HTTP/1.1 200 OK\r\n\r\n";
+
+    // convert string data to bytes, then send as payload in stream.write
+    stream.write(response.as_bytes()).unwrap(); 
+    stream.flush().unwrap();
+}
+```
+
+- `response` holds the success message's data. 
+- then call `as_bytes` on `response` to convert the string data to bytes. The write method on stream takes a `&[u8]` and sends those bytes directly down the connection.  
+
+Because the `write` operation could fail, we use `unwrap` or add error handling here. Finally, `flush` will wait and prevent the program from continuing until all the bytes are written to the connection; TcpStream contains an internal buffer to minimize calls to the underlying operating system.  
+
+With these changes, let’s run our code and make a request. We’re no longer printing any data to the terminal, so we won’t see any output other than the output from Cargo. When you load `127.0.0.1:7878` in a web browser, you should get a blank page instead of an error  
+
+## Returning Real HTML
+
+create a new file, `hello.html` in the root of your project dir, not in the `src` dir. You can input any HTML you want
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Hello!</title>
+  </head>
+  <body>
+    <h1>Hello!</h1>
+    <p>Hi from Rust</p>
+  </body>
+</html>
+```
+
+- to return this from the server when a request is received, modify `handle_connection` to read the `HTML` file, add it to the response as a body, and send it.
+
+```rust
+// sending the contents of hello.html as the body of the response
+use std::fs;
+// --snip--
+
+fn handle_connection(mut stream: TcpStream) {
+    let mut buffer = [0; 512];
+    stream.read(&mut buffer).unwrap();
+
+    let contents = fs::read_to_string("hello.html").unwrap();
+
+    let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", contents);
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
+}
+```
+
+- bring the standard library’s filesystem module into scope
+- use `format!` to add the file’s contents as the body of the success response
+- run this code with cargo run and load `127.0.0.1:7878` in your browser; and see your HTML rendered
+
+The code is ignoring the request data in buffer and just sending back the contents of the HTML file unconditionally. That means if you try requesting `127.0.0.1:7878/something-else` in your browser, you’ll still get back this same HTML response. Our server is very limited and is not what most web servers do.  
+
+Let's customize our responses depending on the request and only send back the HTML file for a well-formed request to `/`.
+
+## Validating the Request and Selectively Responding
+
+Right now, our web server will return the HTML in the file no matter what the client requested.  
+Let’s add functionality to check that the browser is requesting `/` before returning the HTML file and return an error if the browser requests anything else.  
+For this we need to modify `handle_connection` so it checks the content of the request received against what we know a request for `/` looks like and adds `if` and `else` blocks to treat requests differently
+
+```rust
+// --snip--
+
+fn handle_connection(mut stream: TcpStream) {
+    // create an empty buffer
+    let mut buffer = [0; 512];
+    // read the stream data into the buffer
+    stream.read(&mut buffer).unwrap();
+
+    let get_request_prefix = b"GET / HTTP/1.1\r\n";
+
+    if buffer.starts_with(get_request_prefix) {
+        let contents = fs::read_to_string("hello.html").unwrap();
+        let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", contents);
+
+        stream.write(response.as_bytes()).unwrap();
+        stream.flush().unwrap();
+    } else {
+        // some other request
+    }
+}
+```
+
+1. hardcode the data corresponding to the `/` request into `get_request_prefix`
+  - Because we’re reading raw bytes into the buffer, we transform `get_request_prefix` into a byte string by adding the `b""` byte string syntax at the start of the content data
+  - Then we check whether buffer starts with the bytes in `get_request_prefix`
+  - If so, it means we’ve received a well-formed request to `/`, which is the success case we’ll handle in the if block that returns the contents of our HTML file.
+
+If buffer does not start with the bytes in `get_request_prefix`, it means we’ve received some other request. We’ll add code to the else block in a moment to respond to all other requests.
+
+Request `127.0.0.1:7878` and get the `HTML` in `hello.html`. If you request `127.0.0.1:7878/something-else`, you’ll get a connection error.  
+
+Now let’s add the code to the `else` block to return a response with the status code 404, which signals that the content for the request was not found. We’ll also return some HTML for a page to render in the browser indicating the response to the end user.
+
+```rust
+// --snip--
+
+// Responding with status code 404 and an error page if anything other than / was requested
+} else {
+    let status_line = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
+    let contents = fs::read_to_string("404.html").unwrap();
+
+    let response = format!("{}{}", status_line, contents);
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
+}
+```
+
+Here, our response has status code 404 and the reason phrase `NOT FOUND`. We’re still not returning headers, and the body of the response will be the HTML in the file 404.html. You’ll need to create a `404.html` file next to `hello.html` for the error page
+
+```rust
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Hello!</title>
+  </head>
+  <body>
+    <h1>Oops!</h1>
+    <p>Sorry, I don't know what you're asking for.</p>
+  </body>
+</html>
+```
+
+Now, requesting `127.0.0.1:7878` should return the contents of `hello.html`, and any other request, like `127.0.0.1:7878/foo`, should return the error HTML from `404.html`.
+
+## A Touch of Refactoring
+
+There is a lot of repetition in `if` and `else`: 
+
+- they’re both reading files and writing the contents of the files to the stream. The only differences are the status line and the filename. Let’s make the code more concise by pulling out those differences into separate if and else lines that will assign the values of the status line and the filename to variables
+
+```rust
+// --snip--
+
+fn handle_connection(mut stream: TcpStream) {
+    // --snip--
+    // 'if let' assignment here into a tuple
+    let (status_line, filename) = if buffer.starts_with(get) {
+        ("HTTP/1.1 200 OK\r\n\r\n", "hello.html")
+    } else {
+        ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "404.html")
+    };
+
+    let contents = fs::read_to_string(filename).unwrap();
+    let response = format!("{}{}", status_line, contents);
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
+}
+```
+
+Now the if and else blocks only return the appropriate values for the status line and filename in a tuple:
+
+- then destructure to assign these two values to `status_line` and `filename` using a pattern in the let statement
+
+The previously duplicated code is now outside the if and else blocks and uses the `status_line` and `filename` variables. This makes it easier to see the difference between the two cases, and it means we have only one place to update the code if we want to change how the file reading and response writing work
+
+- a simple web server in ~40 lines of Rust that responds to one request with a page of content and responds to all other requests with a 404 response.
+
+This server runs in a single thread, meaning it can only serve one request at a time. Let’s examine how that can be a problem by simulating some slow requests. Then we’ll fix it so our server can handle multiple requests at once.
+
