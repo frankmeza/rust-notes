@@ -128,7 +128,10 @@ In the `for` loop in the `main` function:
 - we now call the new `handle_connection` function and pass the stream to it.  
 
 In the `handle_connection` function, we’ve made the stream parameter mutable, `let mut buffer = [0; 512];`.  
-The reason is that the `TcpStream` instance keeps track of what data it returns to us internally. It might read more data than we asked for and save that data for the next time we ask for data. It therefore needs to be `mut` because its internal state might change; usually, we think of "reading" as not needing mutation, but in this case we need the `mut` keyword.
+
+- The reason is that the `TcpStream` instance keeps track of what data it returns to us internally.  
+- It might read more data than we asked for and save that data for the next time we ask for data.  
+- __It therefore needs to be `mut` because its internal state might change; usually, we think of "reading" as not needing mutation, but in this case we need the `mut` keyword.__
 
 Next, we need to actually read from the stream, `stream.read(&mut buffer).unwrap();`. We do this in two steps:
 
@@ -140,9 +143,9 @@ Next, we need to actually read from the stream, `stream.read(&mut buffer).unwrap
   - The `String::from_utf8_lossy` function takes a `&[u8]` and produces a `String` from it. 
   - The "lossy" part of the name indicates the behavior of this function when it sees an invalid UTF-8 sequence: it will replace the invalid sequence with �, the U+FFFD REPLACEMENT CHARACTER. You might see replacement characters for characters in the buffer that aren’t filled by request data.
 
-Let’s try this code! Start the program and make a request in a web browser again. Note that we’ll still get an error page in the browser, but our program’s output in the terminal will now look similar to this:
+try it out:
 
-
+```
 $ cargo run
    Compiling hello v0.1.0 (file:///projects/hello)
     Finished dev [unoptimized + debuginfo] target(s) in 0.42 secs
@@ -157,6 +160,19 @@ Accept-Encoding: gzip, deflate
 Connection: keep-alive
 Upgrade-Insecure-Requests: 1
 ������������������������������������
-Depending on your browser, you might get slightly different output. Now that we’re printing the request data, we can see why we get multiple connections from one browser request by looking at the path after Request: GET. If the repeated connections are all requesting /, we know the browser is trying to fetch / repeatedly because it’s not getting a response from our program.
+```
 
-Let’s break down this request data to understand what the browser is asking of our program.
+Depending on your browser, you might get slightly different output.  
+
+```
+# this is with cURL
+
+Request: GET / HTTP/1.1
+Host: localhost:7878
+User-Agent: curl/7.64.1
+Accept: */*
+```
+
+Now that we’re printing the request data, we can see why we get multiple connections from one browser request by looking at the path after Request: `GET`. If the repeated connections are all requesting `/`, we know the browser is trying to fetch `/` repeatedly because it’s not getting a response from our program.  
+
+Let’s break down this request data to understand what the browser is asking of our program:
